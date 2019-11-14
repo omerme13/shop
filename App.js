@@ -3,11 +3,20 @@ import { StyleSheet, View } from "react-native";
 import * as Font from 'expo-font';
 import {AppLoading} from 'expo'; 
 import { enableScreens } from 'react-native-screens';
+import { createStore, combineReducers } from 'redux';
+import { Provider } from 'react-redux'; 
 
-import StyledText from './components/StyledText';
+import ShopNavigator from './navigation/ShopNavigator';
+import productReducer from './store/reducers/product';
+// import StyledText from './components/StyledText';
 
 
 enableScreens(); // improves the performance of the app
+
+const rootReducer = combineReducers({
+    product: productReducer
+})
+const store = createStore(rootReducer);
 
 const fetchFonts = () => {
     return Font.loadAsync({
@@ -31,9 +40,9 @@ const app = () => {
     }
 
     return (
-        <View style={styles.screen}>
-            <StyledText>Open up App.js to start working on your app!</StyledText>
-        </View>
+        <Provider store={store}>
+            <ShopNavigator />
+        </Provider>
     );
 }
 

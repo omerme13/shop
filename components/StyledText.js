@@ -1,6 +1,8 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 
+import { colors } from '../variables';
+
 const findStyle = type => {
     switch(type) {
         case 'title':
@@ -23,14 +25,18 @@ const bodyText = props => {
 
 const styles = StyleSheet.create({
     body: {
-        fontFamily: 'open-sans'
+        fontFamily: 'open-sans',
+        fontSize: 15,
+        color: colors.text
+
     },
     title: {
         fontFamily: 'open-sans-bold',
-        fontSize: 20,
+        fontSize: 22,
         textAlign: 'center',
         textTransform: 'capitalize',
-        marginVertical: 15
+        marginVertical: 10,
+        color: colors.text
     }
 })
 
