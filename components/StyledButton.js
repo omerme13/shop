@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, TouchableNativeFeedback, StyleSheet} from 'react-native';
 
 import { colors } from '../variables';
 
@@ -14,14 +14,16 @@ const styledButton = props => {
     };
 
     return (
-        <TouchableOpacity 
-            activeOpacity={0.7} 
-            onPress={props.onPress}
-        >
-            <View style={generalStyle}>
-                <Text style={textStyle}>{props.title}</Text>
-            </View>
-        </TouchableOpacity>
+        <View style={{overflow: 'hidden', borderRadius: 200}}>
+            <TouchableNativeFeedback 
+                activeOpacity={0.7} 
+                onPress={props.onPress}
+            >
+                <View style={{...generalStyle, ...props.style}}>
+                    <Text style={textStyle}>{props.title}</Text>
+                </View>
+            </TouchableNativeFeedback>
+        </View>
     ); 
 }
 

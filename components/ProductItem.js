@@ -1,17 +1,23 @@
 import React from "react";
-import {
-    View,
-    StyleSheet,
-    // TouchableOpacity,
-    Image,
-    Button
-} from "react-native";
+import { View, StyleSheet, Image, TouchableNativeFeedback } from "react-native";
+import { useDispatch } from 'react-redux';
 
 import StyledText from "./StyledText";
 import StyledButton from "./StyledButton";
-import { colors } from '../variables';
+
+import { addToCart } from '../store/actions/cart';
+import { colors } from "../variables";
 
 const productItem = props => {
+    const dispatch = useDispatch();
+
+    const navigateToProductDetail = () => {
+        props.navigation.navigate("ProductDetail", {
+            id,
+            title
+        });
+    }
+
     const {
         id,
         customerId,
@@ -22,26 +28,35 @@ const productItem = props => {
     } = props.details;
 
     return (
-        <View style={styles.productItem}>
-            <Image source={{uri: imageUrl}} style={styles.image} />
-            <StyledText type="title" style={styles.title}>
-                {title}
-            </StyledText>
-            <StyledText type="body" style={styles.price}>
-                {price}$
-            </StyledText>
-            <View style={styles.actions}>
-                <StyledButton style={{marginRight:10}} title="View Details" />
-                <StyledButton title="To Cart" />
-            </View>
+        <View style={styles.touchable}>
+            <TouchableNativeFeedback useForeground onPress={navigateToProductDetail}>
+                <View style={styles.productItem}>
+                    <Image source={{ uri: imageUrl }} style={styles.image} />
+                    <StyledText type="title" style={styles.title}>
+                        {title}
+                    </StyledText>
+                    <StyledText type="body" style={styles.price}>
+                        {price}$
+                    </StyledText>
+                    <View style={styles.actions}>
+                        <StyledButton
+                            title="View Details"
+                            onPress={navigateToProductDetail} />
+                        <StyledButton 
+                            title="To Cart" 
+                            onPress={() => dispatch(addToCart(props.details))}
+                        />
+                    </View>
+                </View>
+            </TouchableNativeFeedback>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     productItem: {
-        shadowColor: 'black',
-        shadowOpacity: 0.15, 
+        shadowColor: "black",
+        shadowOpacity: 0.15,
         shadowOffset: {
             width: 0,
             height: 2
@@ -50,32 +65,35 @@ const styles = StyleSheet.create({
         elevation: 3,
         borderRadius: 5,
         marginVertical: 10,
-        width: '80%',
+        width: "80%",
         height: 300,
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        marginLeft: 'auto',
-        alignItems: 'center',
+        marginLeft: "auto",
+        marginRight: "auto",
+        marginLeft: "auto",
+        alignItems: "center",
         backgroundColor: colors.primaryLight,
-        overflow: 'hidden'
+        overflow: "hidden"
     },
     image: {
-        height: '50%',
-        width: '100%'
+        height: "50%",
+        width: "100%"
     },
     title: {
-        color: colors.secondary,
-        // backgroundColor: 'red'
-
+        color: colors.secondary
     },
     price: {
-        marginTop: -12
+        marginTop: -10,
+        color: 'gray'
     },
     actions: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '80%',
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: "80%",
         marginTop: 20
+    },
+    touchable: {
+        overflow: "hidden", 
+        borderRadius: 5
     }
 });
 

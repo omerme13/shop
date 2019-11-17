@@ -27,7 +27,9 @@ const styles = StyleSheet.create({
     body: {
         fontFamily: 'open-sans',
         fontSize: 15,
-        color: colors.text
+        color: colors.text,
+        marginVertical: 5
+
 
     },
     title: {

@@ -5,18 +5,21 @@ import {AppLoading} from 'expo';
 import { enableScreens } from 'react-native-screens';
 import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux'; 
+import { composeWithDevTools } from 'redux-devtools-extension';
 
 import ShopNavigator from './navigation/ShopNavigator';
 import productReducer from './store/reducers/product';
-// import StyledText from './components/StyledText';
+import cartReducer from './store/reducers/cart';
 
 
 enableScreens(); // improves the performance of the app
 
 const rootReducer = combineReducers({
-    product: productReducer
+    product: productReducer,
+    cart: cartReducer
 })
-const store = createStore(rootReducer);
+// TODO remove composeWithDevTools before deployment
+const store = createStore(rootReducer, composeWithDevTools());
 
 const fetchFonts = () => {
     return Font.loadAsync({

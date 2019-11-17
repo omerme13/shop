@@ -7,11 +7,12 @@ import StyledText from "../../StyledText";
 
 const productOverview = props => {
     const products = useSelector(state => state.product.availableProducts);
-
+    
     const renderProduct = itemData => {
         return (
             <ProductItem 
                 details={itemData.item}
+                navigation={props.navigation}
             />
         )
     }
