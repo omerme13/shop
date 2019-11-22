@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import StyledText from "./StyledText";
 import StyledButton from "./StyledButton";
+import Card from './Card';
 
 import { addToCart } from '../store/actions/cart';
 import { colors } from "../variables";
@@ -30,7 +31,7 @@ const productItem = props => {
     return (
         <View style={styles.touchable}>
             <TouchableNativeFeedback useForeground onPress={navigateToProductDetail}>
-                <View style={styles.productItem}>
+                <Card style={styles.productItem}>
                     <Image source={{ uri: imageUrl }} style={styles.image} />
                     <StyledText type="title" style={styles.title}>
                         {title}
@@ -41,45 +42,27 @@ const productItem = props => {
                     <View style={styles.actions}>
                         <StyledButton
                             title="View Details"
-                            onPress={navigateToProductDetail} />
+                            onPress={navigateToProductDetail} 
+                            background={colors.secondary}
+                        />
                         <StyledButton 
                             title="To Cart" 
                             onPress={() => dispatch(addToCart(props.details))}
                         />
                     </View>
-                </View>
+                </Card>
             </TouchableNativeFeedback>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    productItem: {
-        shadowColor: "black",
-        shadowOpacity: 0.15,
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
-        shadowRadius: 8,
-        elevation: 3,
-        borderRadius: 5,
-        marginVertical: 10,
-        width: "80%",
-        height: 300,
-        marginLeft: "auto",
-        marginRight: "auto",
-        marginLeft: "auto",
-        alignItems: "center",
-        backgroundColor: colors.primaryLight,
-        overflow: "hidden"
-    },
     image: {
         height: "50%",
         width: "100%"
     },
     title: {
-        color: colors.secondary
+        color: colors.primary
     },
     price: {
         marginTop: -10,

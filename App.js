@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import * as Font from 'expo-font';
-import {AppLoading} from 'expo'; 
-import { enableScreens } from 'react-native-screens';
+import { AppLoading } from 'expo'; 
 import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux'; 
 import { composeWithDevTools } from 'redux-devtools-extension';
@@ -10,14 +9,14 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import ShopNavigator from './navigation/ShopNavigator';
 import productReducer from './store/reducers/product';
 import cartReducer from './store/reducers/cart';
-
-
-enableScreens(); // improves the performance of the app
+import orderReducer from './store/reducers/order';
 
 const rootReducer = combineReducers({
     product: productReducer,
-    cart: cartReducer
-})
+    cart: cartReducer,
+    order: orderReducer
+});
+
 // TODO remove composeWithDevTools before deployment
 const store = createStore(rootReducer, composeWithDevTools());
 

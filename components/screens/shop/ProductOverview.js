@@ -1,9 +1,10 @@
 import React from "react";
-import { StyleSheet, FlatList } from "react-native";
+import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import ProductItem from '../../ProductItem';
-import StyledText from "../../StyledText";
+import HeaderButton from '../../HeaderButton';
 
 const productOverview = props => {
     const products = useSelector(state => state.product.availableProducts);
@@ -17,7 +18,6 @@ const productOverview = props => {
         )
     }
 
-
     return (
         <FlatList
             keyExtractor={item => item.id}
@@ -27,8 +27,29 @@ const productOverview = props => {
     );
 };
 
-productOverview.navigationOptions = {
-    headerTitle: 'All Products'
+productOverview.navigationOptions = navData => {
+
+    return {
+            headerTitle: 'All Products',
+            headerLeft: (
+                <HeaderButtons HeaderButtonComponent={HeaderButton}>
+                    <Item
+                        title="menu"
+                        iconName="md-menu" 
+                        onPress={() => navData.navigation.toggleDrawer()}
+                    />
+                </HeaderButtons>
+            ),
+            headerRight: (
+                <HeaderButtons HeaderButtonComponent={HeaderButton}>
+                    <Item
+                        title="cart"
+                        iconName="md-cart" 
+                        onPress={() => navData.navigation.navigate('Cart')}
+                    />
+                </HeaderButtons>
+            )
+    }
 }
 
 export default productOverview;

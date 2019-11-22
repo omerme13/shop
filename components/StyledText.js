@@ -9,7 +9,7 @@ const findStyle = type => {
             return styles.title;
         case 'body':
             return styles.body;
-        default:  break;    
+        default:  return styles.body;    
     }  
 }
 

@@ -1,4 +1,5 @@
 import * as actions from '../actions/cart';
+import { ADD_ORDER } from '../actions/order';
 import CartItem from '../../models/cartItem';
 
 const initialState = {
@@ -7,6 +8,7 @@ const initialState = {
 };
 
 const cartReducer = (state = initialState, action) => {
+    
     switch(action.type) {
         case actions.ADD_TO_CART:
             const {title, price, id} = action.product;
@@ -17,7 +19,7 @@ const cartReducer = (state = initialState, action) => {
                     state.items[id].quantity + 1,
                     price,
                     title,
-                    state.items[id].sum + state.items[id].price.toFixed(2)
+                    state.items[id].sum + state.items[id].price
                 );
             }
  
@@ -26,6 +28,19 @@ const cartReducer = (state = initialState, action) => {
                 items: {...state.items, [id]: item },
                 totalPrice: state.totalPrice + price
             }
+        
+        case actions.REMOVE_FROM_CART:
+            const updatedItems = {...state.items};
+            delete updatedItems[action.productId];
+
+            return {
+                ...state,
+                items: updatedItems,
+                totalPrice: state.totalPrice - action.productSum
+            }
+
+        case ADD_ORDER: 
+            return initialState;    
             
         default: return state;
     }
