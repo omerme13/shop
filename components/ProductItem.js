@@ -1,37 +1,21 @@
 import React from "react";
 import { View, StyleSheet, Image, TouchableNativeFeedback } from "react-native";
-import { useDispatch } from 'react-redux';
 
 import StyledText from "./StyledText";
-import StyledButton from "./StyledButton";
-import Card from './Card';
+import Card from "./Card";
 
-import { addToCart } from '../store/actions/cart';
 import { colors } from "../variables";
 
 const productItem = props => {
-    const dispatch = useDispatch();
-
-    const navigateToProductDetail = () => {
-        props.navigation.navigate("ProductDetail", {
-            id,
-            title
-        });
-    }
-
-    const {
-        id,
-        customerId,
-        title,
-        imageUrl,
-        description,
-        price
-    } = props.details;
+    const { title, imageUrl, price } = props.details;
 
     return (
-        <View style={styles.touchable}>
-            <TouchableNativeFeedback useForeground onPress={navigateToProductDetail}>
-                <Card style={styles.productItem}>
+        <Card style={styles.productItem}>
+            <TouchableNativeFeedback
+                useForeground
+                onPress={props.pressed}
+            >
+                <View style={styles.touchable}>
                     <Image source={{ uri: imageUrl }} style={styles.image} />
                     <StyledText type="title" style={styles.title}>
                         {title}
@@ -40,19 +24,11 @@ const productItem = props => {
                         {price}$
                     </StyledText>
                     <View style={styles.actions}>
-                        <StyledButton
-                            title="View Details"
-                            onPress={navigateToProductDetail} 
-                            background={colors.secondary}
-                        />
-                        <StyledButton 
-                            title="To Cart" 
-                            onPress={() => dispatch(addToCart(props.details))}
-                        />
+                        {props.children}
                     </View>
-                </Card>
+                </View>
             </TouchableNativeFeedback>
-        </View>
+        </Card>
     );
 };
 
@@ -66,17 +42,20 @@ const styles = StyleSheet.create({
     },
     price: {
         marginTop: -10,
-        color: 'gray'
+        color: "gray",
+        marginLeft: 'auto',
+        marginRight: 'auto',
     },
     actions: {
         flexDirection: "row",
-        justifyContent: "space-between",
-        width: "80%",
+        justifyContent: "space-around",
         marginTop: 20
     },
     touchable: {
-        overflow: "hidden", 
-        borderRadius: 5
+        overflow: "hidden",
+        borderRadius: 5,
+        width: "100%",
+        height: '100%'
     }
 });
 

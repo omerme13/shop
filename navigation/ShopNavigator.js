@@ -8,6 +8,7 @@ import ProductOverview from '../components/screens/shop/ProductOverview';
 import ProductDetail from '../components/screens/shop/ProductDetail';
 import Cart from '../components/screens/customer/Cart';
 import Orders from '../components/screens/customer/Orders';
+import CustomerProducts from '../components/screens/customer/CustomerProducts';
 
 import { colors } from '../variables';
 
@@ -51,9 +52,20 @@ const OrdersNavigator = createStackNavigator({
     }
 });
 
+const CustomerOrdersNavigator = createStackNavigator({
+    CustomerProducts
+},
+{
+    defaultNavigationOptions: navOptions,
+    navigationOptions: {
+        drawerIcon: drawerConfig => addIcon(drawerConfig, "md-create")
+    }
+});
+
 const ShopNavigator = createDrawerNavigator({
     Products: ProductNavigator,
-    Orders: OrdersNavigator
+    Orders: OrdersNavigator,
+    Admin: CustomerOrdersNavigator
 },
 {
     contentOptions: {

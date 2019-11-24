@@ -26,7 +26,6 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         marginLeft: "auto",
         marginRight: "auto",
-        marginLeft: "auto",
         alignItems: "center",
         backgroundColor: colors.primaryLight,
         overflow: "hidden"        

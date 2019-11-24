@@ -30,7 +30,7 @@ orders.navigationOptions = navData => {
                     onPress={() => navData.navigation.toggleDrawer()}
                 />
             </HeaderButtons>
-        ),
+        )
     }
 }
 
