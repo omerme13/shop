@@ -10,12 +10,19 @@ import StyledButton from '../../StyledButton';
 import { colors } from '../../../variables';
 import { deleteProduct } from '../../../store/actions/product'
 
-const customerProducts = props => {
+const userProducts = props => {
+    const editProductHandler = id => {
+        props.navigation.navigate('EditProduct', { id });
+    } 
+
     const renderCustomerItem = itemData => (
-        <ProductItem details={itemData.item} pressed={() => {}}>
+        <ProductItem 
+            details={itemData.item} 
+            pressed={() => editProductHandler(itemData.item.id)}
+        >
             <StyledButton
                 title="Edit"
-                onPress={() => {}}
+                onPress={() => editProductHandler(itemData.item.id)}
                 background={colors.secondary}
             />
             <StyledButton
@@ -26,7 +33,7 @@ const customerProducts = props => {
     );
 
     const dispatch = useDispatch();
-    const products = useSelector(state => state.product.customerProducts);
+    const products = useSelector(state => state.product.userProducts);
 
     return (
         <FlatList
@@ -37,7 +44,7 @@ const customerProducts = props => {
     );
 };
 
-customerProducts.navigationOptions = navData => {
+userProducts.navigationOptions = navData => {
     return {
         headerTitle: "Your Products",
         headerLeft: (
@@ -48,8 +55,17 @@ customerProducts.navigationOptions = navData => {
                     onPress={() => navData.navigation.toggleDrawer()}
                 />
             </HeaderButtons>
+        ),
+        headerRight: (
+            <HeaderButtons HeaderButtonComponent={HeaderButton}>
+                <Item
+                    title="add"
+                    iconName="md-create"
+                    onPress={() => navData.navigation.navigate('EditProduct')}
+                />
+            </HeaderButtons>
         )
     };
 };
 
-export default customerProducts;
+export default userProducts;

@@ -52,7 +52,7 @@ const cart = props => {
                 <StyledText style={styles.summaryText}>
                     Total:&nbsp;
                     <StyledText type="title" style={styles.totalPrice}>
-                        {totalPrice.toFixed(2)}$
+                        {Math.round(totalPrice.toFixed(2) * 10) / 10}$
                     </StyledText>
                 </StyledText>
                 <StyledButton 

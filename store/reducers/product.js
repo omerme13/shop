@@ -3,7 +3,7 @@ import * as actions from '../actions/product';
 
 const initialState = {
     availableProducts: PRODUCTS,
-    customerProducts: PRODUCTS.filter(product => product.customerId === 'u1')
+    userProducts: PRODUCTS.filter(product => product.customerId === 'u1')
 }
 
 const productReducer = (state = initialState, action) => {
@@ -12,14 +12,14 @@ const productReducer = (state = initialState, action) => {
             updatedAvailableProducts = state.availableProducts.filter(prod => (
                 prod.id !== action.id
             )); 
-            updatedCustomerProducts = state.customerProducts.filter(prod => (
+            updatedUserProducts = state.userProducts.filter(prod => (
                 prod.id !== action.id
             )); 
 
             return {
                 ...state,
                 availableProducts: updatedAvailableProducts,
-                customerProducts: updatedCustomerProducts
+                userProducts: updatedUserProducts
             }
     }
     return state;
