@@ -11,9 +11,12 @@ const formControl = props => {
             <StyledText style={styles.label}>{props.label}</StyledText>
             <TextInput 
                 label={props.label} 
-                value={inputValue} 
+                value={inputValue.toString()} // in case there is a number(price) it becomes invalid
                 style={styles.input} 
-                onChangeText={text => setInputValue(text)}
+                onChangeText={text => {
+                    setInputValue(text);
+                    props.set(text)
+                }}
             />
         </View>
     )

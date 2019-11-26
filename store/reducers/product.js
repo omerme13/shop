@@ -1,28 +1,59 @@
-import PRODUCTS from '../../data/data';
-import * as actions from '../actions/product';
+import PRODUCTS from "../../data/data";
+import * as actions from "../actions/product";
 
 const initialState = {
     availableProducts: PRODUCTS,
-    userProducts: PRODUCTS.filter(product => product.customerId === 'u1')
-}
+    userProducts: PRODUCTS.filter(product => product.customerId === "u1")
+};
 
 const productReducer = (state = initialState, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case actions.DELETE_PRODUCT:
-            updatedAvailableProducts = state.availableProducts.filter(prod => (
-                prod.id !== action.id
-            )); 
-            updatedUserProducts = state.userProducts.filter(prod => (
-                prod.id !== action.id
-            )); 
+            productsAfterDeletion = state.availableProducts.filter(
+                prod => prod.id !== action.id
+            );
+            userProductsAfterDeletion = state.userProducts.filter(
+                prod => prod.id !== action.id
+            );
 
             return {
                 ...state,
-                availableProducts: updatedAvailableProducts,
-                userProducts: updatedUserProducts
-            }
+                availableProducts: productsAfterDeletion,
+                userProducts: userProductsAfterDeletion
+            };
+
+        case actions.CREATE_PRODUCT:
+            return {
+                ...state,
+                availableProducts: state.availableProducts.concat(
+                    action.product
+                ),
+                userProducts: state.userProducts.concat(action.product)
+            };
+
+        case actions.UPDATE_PRODUCT:
+            const updatedUserProducts = [...state.userProducts];
+            const updatedUserProdIndex = updatedUserProducts.findIndex(
+                prod => prod.id === action.id
+            );
+
+            const updatedProducts = [...state.availableProducts];
+            const updatedProdIndex = updatedProducts.findIndex(
+                prod => prod.id === action.id
+            );
+
+            updatedUserProducts[updatedUserProdIndex] = action.product;
+            updatedProducts[updatedProdIndex] = action.product;
+
+            return {
+                ...state,
+                userProducts: updatedUserProducts,
+                availableProducts: updatedProducts
+            };
+
+        default:
+            return state;
     }
-    return state;
-}
+};
 
 export default productReducer;
