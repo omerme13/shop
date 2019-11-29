@@ -1,37 +1,90 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import React, { useEffect, useCallback, useReducer } from "react";
+import {
+    View,
+    StyleSheet,
+    ScrollView,
+    Alert,
+    KeyboardAvoidingView
+} from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import HeaderButton from "../../HeaderButton";
-import FormControl from "../../FormControl";
+import FormControl from "../../FormInput";
 import StyledButton from "../../StyledButton";
 
 import Product from "../../../models/product";
 import { createProduct, updateProduct } from "../../../store/actions/product";
+
+const FORM_UPDATE = "FORM_UPDATE";
+const formReducer = (state, action) => {
+    if (action.type === FORM_UPDATE) {
+        const updatedValues = {
+            ...state.inputValues,
+            [action.inputType]: action.inputValue
+        };
+        const updatedValidities = {
+            ...state.inputValidities,
+            [action.inputType]: action.isValid
+        };
+
+        let isFormValid;
+        for (const key in updatedValidities) {
+            if (!updatedValidities[key]) {
+                isFormValid = false;
+                break;
+            }
+            isFormValid = true;
+        }
+        return {
+            ...state,
+            inputValues: updatedValues,
+            inputValidities: updatedValidities,
+            isFormValid
+        };
+    }
+    return state;
+};
 
 const editProduct = props => {
     const id = props.navigation.getParam("id");
     const isUpdateState = id;
 
     if (isUpdateState) {
-        const details = useSelector(state => (
+        const details = useSelector(state =>
             state.product.userProducts.find(prod => prod.id === id)
-        ));
+        );
 
         var { title, imageUrl, description, price } = details;
     }
 
-
-    const [newTitle, setNewTitle] = useState(id ? title : '');
-    const [newImageUrl, setNewImageUrl] = useState(id ? imageUrl : '');
-    const [newPrice, setNewPrice] = useState(id ? price : '');
-    const [newDescription, setNewDescription] = useState(id ? description : '');
+    const [formState, formDispatch] = useReducer(formReducer, {
+        inputValues: {
+            title: isUpdateState ? title : "",
+            imageUrl: isUpdateState ? imageUrl : "",
+            price: isUpdateState ? price : "",
+            description: isUpdateState ? description : ""
+        },
+        inputValidities: {
+            title: isUpdateState ? true : false,
+            imageUrl: isUpdateState ? true : false,
+            price: isUpdateState ? true : false,
+            description: isUpdateState ? true : false
+        },
+        isFormValid: isUpdateState ? true : false
+    });
 
     const dispatch = useDispatch();
 
     const saveChangesHandler = useCallback(
         (productId, newProduct) => {
+            if (!formState.isFormValid) {
+                Alert.alert("Wrong input", "Please check the form again", [
+                    { text: "Okay" }
+                ]);
+                return;
+            }
+
             if (isUpdateState) {
                 dispatch(updateProduct(productId, newProduct));
             } else {
@@ -39,51 +92,84 @@ const editProduct = props => {
             }
 
             props.navigation.goBack();
-    }, []);
+        },
+        [formState]
+    );
+
+    const setTextHandler = (inputType, inputValue, isValid) => {
+        formDispatch({
+            type: FORM_UPDATE,
+            inputValue,
+            isValid,
+            inputType
+        });
+    };
 
     useEffect(() => {
         props.navigation.setParams({ saveChanges: saveChangesHandler });
     }, [saveChangesHandler]);
 
     useEffect(() => {
+        const { title, imageUrl, description, price } = formState.inputValues;
+
         const newProduct = new Product(
             isUpdateState ? id : new Date().toString(),
             "u1",
-            newTitle,
-            newImageUrl,
-            newDescription,
-            +newPrice // converts the string into a number
+            title,
+            imageUrl,
+            description,
+            +price // converts the string into a number
         );
 
         props.navigation.setParams({ newProduct });
-    }, [newTitle, newImageUrl, newPrice, newDescription]);   
+    }, [formState]);
 
     return (
-        <ScrollView>
-            <View style={styles.form}>
-                <FormControl
-                    label="title"
-                    input={newTitle}
-                    set={text => setNewTitle(text)}
-                />
-                <FormControl
-                    label="image url"
-                    input={newImageUrl}
-                    set={text => setNewImageUrl(text)}
-                />
-                <FormControl
-                    label="price"
-                    input={newPrice}
-                    set={text => setNewPrice(text)}
-                />
-                <FormControl
-                    label="description"
-                    input={newDescription}
-                    set={text => setNewDescription(text)}
-                />
-                <StyledButton title="Hello" />
-            </View>
-        </ScrollView>
+        <KeyboardAvoidingView
+            behavior="padding"
+            keyboardVerticalOffset={100}
+            style={{flex: 1}}
+        >
+            <ScrollView>
+                <View style={styles.form}>
+                    <FormControl
+                        label="title"
+                        input={formState.inputValues.title}
+                        set={(inputValue, isValid) =>
+                            setTextHandler("title", inputValue, isValid)
+                        }
+                        required
+                    />
+                    <FormControl
+                        label="image url"
+                        input={formState.inputValues.imageUrl}
+                        set={(inputValue, isValid) =>
+                            setTextHandler("imageUrl", inputValue, isValid)
+                        }
+                    />
+                    <FormControl
+                        label="price"
+                        input={formState.inputValues.price}
+                        inputType="number-pad"
+                        set={(inputValue, isValid) =>
+                            setTextHandler("price", inputValue, isValid)
+                        }
+                        required
+                        min={0.1}
+                    />
+                    <FormControl
+                        label="description"
+                        input={formState.inputValues.description}
+                        set={(inputValue, isValid) =>
+                            setTextHandler("description", inputValue, isValid)
+                        }
+                        required
+                        minLength={5}
+                    />
+                    <StyledButton title="Hello" />
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
