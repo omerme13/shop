@@ -1,16 +1,17 @@
-import React from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useState } from "react";
+import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
 
-import StyledText from '../../StyledText';
-import StyledButton from '../../StyledButton';
-import CartItem from '../../CartItem';
+import StyledText from "../../StyledText";
+import StyledButton from "../../StyledButton";
+import CartItem from "../../CartItem";
 
-import {colors} from '../../../variables';
-import { removeFromCart } from '../../../store/actions/cart';
-import { addOrder } from '../../../store/actions/order';
+import { colors } from "../../../variables";
+import { removeFromCart } from "../../../store/actions/cart";
+import { addOrder } from "../../../store/actions/order";
 
 const cart = props => {
+    const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
 
     const totalPrice = useSelector(state => state.cart.totalPrice);
@@ -24,19 +25,21 @@ const cart = props => {
                 price,
                 title,
                 sum: sum.toFixed(2)
-            })
+            });
         }
 
         return itemsArray;
     });
 
     const removeCartItemHandler = itemToRemove => {
-        dispatch(removeFromCart(itemToRemove.id, itemToRemove.sum))
-    }
+        dispatch(removeFromCart(itemToRemove.id, itemToRemove.sum));
+    };
 
-    const orderHandler = () => {
-        dispatch(addOrder(items, totalPrice));
-    }
+    const orderHandler = async () => {
+        setIsLoading(true);
+        await dispatch(addOrder(items, totalPrice));
+        setIsLoading(false);
+    };
 
     const renderCartItem = itemData => (
         <CartItem
@@ -55,16 +58,18 @@ const cart = props => {
                         {Math.round(totalPrice.toFixed(2) * 10) / 10}$
                     </StyledText>
                 </StyledText>
-                <StyledButton 
-                    title="order now" 
-                    style={styles.button} 
-                    onPress={orderHandler}
-                />
+                {isLoading ? (
+                    <ActivityIndicator size="small" color={colors.primary} />
+                ) : (
+                    <StyledButton
+                        title="order now"
+                        style={styles.button}
+                        onPress={orderHandler}
+                    />
+                )}
             </View>
-            <StyledText>
-                Items:
-            </StyledText>
-            <FlatList 
+            <StyledText>Items:</StyledText>
+            <FlatList
                 data={items}
                 keyExtractor={item => item.id}
                 renderItem={renderCartItem}
@@ -72,17 +77,17 @@ const cart = props => {
             />
         </View>
     );
-}
+};
 
 cart.navigationOptions = {
-    headerTitle: 'Your Cart'
-}
+    headerTitle: "Your Cart"
+};
 
 const styles = StyleSheet.create({
     cart: {
         flex: 1,
         paddingVertical: 30,
-        alignItems: 'center',
+        alignItems: "center"
     },
     button: {
         marginVertical: 15
@@ -102,16 +107,15 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         paddingVertical: 15,
         paddingHorizontal: 25,
-        alignItems: 'center',
+        alignItems: "center",
         marginBottom: 15
     },
     summaryText: {
-        fontSize: 18,
+        fontSize: 18
     },
     list: {
-        width: '100%'
+        width: "100%"
     }
 });
 
 export default cart;
-

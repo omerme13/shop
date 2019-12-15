@@ -1,11 +1,12 @@
 import React from "react";
-import { FlatList, Alert } from "react-native";
+import { FlatList, Alert, View, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import HeaderButton from "../../HeaderButton";
 import ProductItem from "../../ProductItem";
 import StyledButton from '../../StyledButton';
+import StyledText from '../../StyledText';
 
 import { colors } from '../../../variables';
 import { deleteProduct } from '../../../store/actions/product'
@@ -47,6 +48,14 @@ const userProducts = props => {
 
     const products = useSelector(state => state.product.userProducts);
 
+    if (!products.length) {
+        return (
+            <View style={styles.centered}>
+                <StyledText>You have no products yet...</StyledText>
+            </View>
+        ) 
+    }
+
     return (
         <FlatList
             data={products}
@@ -79,5 +88,13 @@ userProducts.navigationOptions = navData => {
         )
     };
 };
+
+const styles = StyleSheet.create({
+    centered: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+});
 
 export default userProducts;

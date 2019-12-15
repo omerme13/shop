@@ -1,24 +1,26 @@
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo'; 
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux'; 
 import { composeWithDevTools } from 'redux-devtools-extension';
+import ReduxThunk from 'redux-thunk';
 
-import ShopNavigator from './navigation/ShopNavigator';
 import productReducer from './store/reducers/product';
 import cartReducer from './store/reducers/cart';
 import orderReducer from './store/reducers/order';
+import authReducer from './store/reducers/auth';
+import NavigationContainer from './navigation/NavigationContainer';
 
 const rootReducer = combineReducers({
     product: productReducer,
     cart: cartReducer,
-    order: orderReducer
+    order: orderReducer,
+    auth: authReducer
 });
 
 // TODO remove composeWithDevTools before deployment
-const store = createStore(rootReducer, composeWithDevTools());
+const store = createStore(rootReducer, applyMiddleware(ReduxThunk), composeWithDevTools());
 
 const fetchFonts = () => {
     return Font.loadAsync({
@@ -43,17 +45,9 @@ const app = () => {
 
     return (
         <Provider store={store}>
-            <ShopNavigator />
+            <NavigationContainer />
         </Provider>
     );
 }
-
-const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    }
-})
 
 export default app;

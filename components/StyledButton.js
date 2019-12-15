@@ -14,12 +14,12 @@ const styledButton = props => {
     };
 
     return (
-        <View style={{overflow: 'hidden', borderRadius: 200}}>
+        <View style={{overflow: 'hidden', borderRadius: 200 ,...props.style}}>
             <TouchableNativeFeedback 
                 activeOpacity={0.7} 
                 onPress={props.onPress}
             >
-                <View style={{...generalStyle, ...props.style}}>
+                <View style={generalStyle}>
                     <Text style={textStyle}>{props.title}</Text>
                 </View>
             </TouchableNativeFeedback>
@@ -37,7 +37,8 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 16,
         fontFamily: 'open-sans-bold',
-        textTransform: 'capitalize'
+        textTransform: 'capitalize',
+        textAlign: 'center'
     }
 });
 

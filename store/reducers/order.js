@@ -9,17 +9,23 @@ const orderReducer = (state = initialState, action) => {
     switch (action.type) {
         case actions.ADD_ORDER:
             const order = new Order(
-                new Date().toString(),
+                action.id,
                 action.items,
                 action.totalPrice,
-                new Date()
+                action.date
             );
 
             return {
                 ...state,
                 orders: [...state.orders, order]
             };
-
+        
+        case actions.GET_ORDERS:
+            return {
+                ...state,
+                orders: action.orders
+            }
+            
         default: return state;    
     }
 };

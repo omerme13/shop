@@ -44,15 +44,14 @@ const formInput = props => {
         <View style={styles.formInput}>
             <StyledText style={styles.label}>{props.label}</StyledText>
             <TextInput
-                label={props.label}
+                {...props}
                 value={inputValue.toString()} // in case there is a number(price) it becomes invalid
-                style={styles.input}
-                keyboardType={props.inputType ? props.inputType : "default"}
+                style={{...styles.input, ...props.style}}
                 onChangeText={text => setHandler(text)}
             />
             {!isValid && isTouched && (
                 <StyledText style={styles.error}>
-                    Please enter a valid input
+                    Please enter a valid {props.label}
                 </StyledText>
             )}
         </View>
@@ -65,7 +64,8 @@ const styles = StyleSheet.create({
     },
     label: {
         fontFamily: "open-sans-bold",
-        marginVertical: 3
+        marginVertical: 3,
+        textTransform: 'capitalize'
     },
     input: {
         paddingHorizontal: 2,

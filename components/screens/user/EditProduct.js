@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useReducer } from "react";
+import React, { useEffect, useCallback, useReducer, useState } from "react";
 import {
     View,
     StyleSheet,
@@ -10,45 +10,23 @@ import { useSelector, useDispatch } from "react-redux";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import HeaderButton from "../../HeaderButton";
-import FormControl from "../../FormInput";
+import FormInput from "../../FormInput";
 import StyledButton from "../../StyledButton";
+import Spinner from '../../Spinner';
 
 import Product from "../../../models/product";
 import { createProduct, updateProduct } from "../../../store/actions/product";
+import { formReducer } from '../../../shared/validation';
 
 const FORM_UPDATE = "FORM_UPDATE";
-const formReducer = (state, action) => {
-    if (action.type === FORM_UPDATE) {
-        const updatedValues = {
-            ...state.inputValues,
-            [action.inputType]: action.inputValue
-        };
-        const updatedValidities = {
-            ...state.inputValidities,
-            [action.inputType]: action.isValid
-        };
-
-        let isFormValid;
-        for (const key in updatedValidities) {
-            if (!updatedValidities[key]) {
-                isFormValid = false;
-                break;
-            }
-            isFormValid = true;
-        }
-        return {
-            ...state,
-            inputValues: updatedValues,
-            inputValidities: updatedValidities,
-            isFormValid
-        };
-    }
-    return state;
-};
 
 const editProduct = props => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
     const id = props.navigation.getParam("id");
     const isUpdateState = id;
+    const userId = useSelector(state => state.auth.userId);
 
     if (isUpdateState) {
         const details = useSelector(state =>
@@ -77,21 +55,29 @@ const editProduct = props => {
     const dispatch = useDispatch();
 
     const saveChangesHandler = useCallback(
-        (productId, newProduct) => {
+        async (productId, newProduct) => {
+            setError(null);
+            setIsLoading(true);
+
             if (!formState.isFormValid) {
                 Alert.alert("Wrong input", "Please check the form again", [
                     { text: "Okay" }
                 ]);
                 return;
             }
+            try {                
+                if (isUpdateState) {
+                    await dispatch(updateProduct(productId, newProduct));
+                } else {
+                    await dispatch(createProduct(newProduct));
+                }
 
-            if (isUpdateState) {
-                dispatch(updateProduct(productId, newProduct));
-            } else {
-                dispatch(createProduct(newProduct));
+                props.navigation.goBack();
+            } catch (err) {
+                setError(err.message);
             }
 
-            props.navigation.goBack();
+            setIsLoading(false);
         },
         [formState]
     );
@@ -114,7 +100,7 @@ const editProduct = props => {
 
         const newProduct = new Product(
             isUpdateState ? id : new Date().toString(),
-            "u1",
+            userId,
             title,
             imageUrl,
             description,
@@ -124,6 +110,19 @@ const editProduct = props => {
         props.navigation.setParams({ newProduct });
     }, [formState]);
 
+    useEffect(() => {
+        if (error) {
+            Alert.alert('An error occurred', error, [{text: 'OK'}])
+        }
+    }, [error]);
+
+    if (isLoading) {
+        return <Spinner />;
+    }
+
+
+    
+
     return (
         <KeyboardAvoidingView
             behavior="padding"
@@ -132,7 +131,7 @@ const editProduct = props => {
         >
             <ScrollView>
                 <View style={styles.form}>
-                    <FormControl
+                    <FormInput
                         label="title"
                         input={formState.inputValues.title}
                         set={(inputValue, isValid) =>
@@ -140,24 +139,24 @@ const editProduct = props => {
                         }
                         required
                     />
-                    <FormControl
+                    <FormInput
                         label="image url"
                         input={formState.inputValues.imageUrl}
                         set={(inputValue, isValid) =>
                             setTextHandler("imageUrl", inputValue, isValid)
                         }
                     />
-                    <FormControl
+                    <FormInput
                         label="price"
                         input={formState.inputValues.price}
-                        inputType="number-pad"
+                        keyboardType="number-pad"
                         set={(inputValue, isValid) =>
                             setTextHandler("price", inputValue, isValid)
                         }
                         required
                         min={0.1}
                     />
-                    <FormControl
+                    <FormInput
                         label="description"
                         input={formState.inputValues.description}
                         set={(inputValue, isValid) =>

@@ -4,4 +4,4 @@ export const colors = {
     secondary: '#2ecc71',
     secondaryLight: '#dff8ea',
     text: '#333'
-}
+};

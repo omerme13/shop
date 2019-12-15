@@ -2,12 +2,19 @@ import PRODUCTS from "../../data/data";
 import * as actions from "../actions/product";
 
 const initialState = {
-    availableProducts: PRODUCTS,
-    userProducts: PRODUCTS.filter(product => product.customerId === "u1")
+    availableProducts: [],
+    userProducts: []
 };
 
 const productReducer = (state = initialState, action) => {
     switch (action.type) {
+        case actions.GET_PRODUCTS:
+            return {
+                ...state,
+                availableProducts: action.products,
+                userProducts: action.userProducts
+            };
+
         case actions.DELETE_PRODUCT:
             productsAfterDeletion = state.availableProducts.filter(
                 prod => prod.id !== action.id
